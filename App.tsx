@@ -7,6 +7,7 @@ import {
 } from "@expo-google-fonts/roboto";
 import { THEME } from "./src/theme";
 import { Loading } from "@components/Loading";
+import { LogIn } from "@screens/LogIn";
 import { SignIn } from "@screens/SignIn";
 
 export default function App() {

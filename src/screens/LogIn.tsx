@@ -4,7 +4,7 @@ import LogoSvg from "@assets/logo.svg";
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 
-export function SignIn() {
+export function LogIn() {
 	return (
 		<VStack flex={1} bg='gray.700' px={10}>
 			<Image
@@ -12,7 +12,7 @@ export function SignIn() {
 				alt='Pessoas treinando na academia'
 				position={"absolute"}
 			/>
-			<Center mt={32} mb={16}>
+			<Center my={32}>
 				<LogoSvg />
 				<Text color='gray.100' fontSize={"sm"}>
 					Treine sua mente e seu corpo
@@ -21,14 +21,8 @@ export function SignIn() {
 
 			<Center mb='auto'>
 				<Heading fontFamily='heading' fontSize='xl' color='gray.100' mb={6}>
-					Crie sua conta
+					Acesse sua conta
 				</Heading>
-				<Input
-					placeholder='Nome'
-					type='text'
-					keyboardType='default'
-					autoCapitalize='words'
-				/>
 				<Input
 					placeholder='E-mail'
 					type='text'
@@ -36,11 +30,13 @@ export function SignIn() {
 					autoCapitalize='none'
 				/>
 				<Input placeholder='Senha' type='password' secureTextEntry />
-				<Input placeholder='Confirme a senha' type='password' secureTextEntry />
 				<Button title='Acessar' />
 			</Center>
 			<Center mb='20'>
-				<Button title='Voltar para o login' variant='outline' />
+				<Text color='white' fontFamily='body' fontSize={16} mb={2}>
+					Ainda não tem acesso?
+				</Text>
+				<Button title='Criar conta' variant='outline' />
 			</Center>
 		</VStack>
 	);
