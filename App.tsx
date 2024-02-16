@@ -5,11 +5,12 @@ import {
 	Roboto_400Regular,
 	Roboto_700Bold
 } from "@expo-google-fonts/roboto";
+
+import { Routes } from "@routes/index";
+import { NavigationContainer } from "@react-navigation/native";
+
 import { THEME } from "./src/theme";
 import { Loading } from "@components/Loading";
-import { LogIn } from "@screens/LogIn";
-import { SignIn } from "@screens/SignIn";
-import { NavigationContainer } from "@react-navigation/native";
 
 export default function App() {
 	const [fontsLoaded] = useFonts({
@@ -18,16 +19,14 @@ export default function App() {
 	});
 
 	return (
-		<NavigationContainer>
-			<NativeBaseProvider theme={THEME}>
-				<StatusBar
-					barStyle='light-content'
-					backgroundColor='transparent'
-					translucent
-				/>
+		<NativeBaseProvider theme={THEME}>
+			<StatusBar
+				barStyle='light-content'
+				backgroundColor='transparent'
+				translucent
+			/>
 
-				{fontsLoaded ? <SignIn /> : <Loading />}
-			</NativeBaseProvider>
-		</NavigationContainer>
+			{fontsLoaded ? <Routes /> : <Loading />}
+		</NativeBaseProvider>
 	);
 }

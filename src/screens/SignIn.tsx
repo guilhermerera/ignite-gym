@@ -3,10 +3,16 @@ import BackgroundImg from "@assets/background.png";
 import LogoSvg from "@assets/logo.svg";
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
+import { useNavigation } from "@react-navigation/native";
 
 export function SignIn() {
+	const navigation = useNavigation();
+
+	function handleBackToLoginPress() {
+		navigation.goBack();
+	}
 	return (
-		<VStack flex={1} bg='gray.700' px={10}>
+		<VStack flex={1} px={10}>
 			<Image
 				source={BackgroundImg}
 				alt='Pessoas treinando na academia'
@@ -40,7 +46,11 @@ export function SignIn() {
 				<Button title='Criar e acessar' />
 			</Center>
 			<Center mb='20'>
-				<Button title='Voltar para o login' variant='outline' />
+				<Button
+					onPress={handleBackToLoginPress}
+					title='Voltar para o login'
+					variant='outline'
+				/>
 			</Center>
 		</VStack>
 	);

@@ -1,12 +1,19 @@
+import { useNavigation } from "@react-navigation/native";
 import { VStack, Image, Text, Center, Heading } from "native-base";
+import { AuthNavigatorRouteProps } from "@routes/auth.routes";
 import BackgroundImg from "@assets/background.png";
 import LogoSvg from "@assets/logo.svg";
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 
 export function LogIn() {
+	const navigation = useNavigation<AuthNavigatorRouteProps>();
+
+	function handleCreateAccountPress() {
+		navigation.navigate("signIn");
+	}
 	return (
-		<VStack flex={1} bg='gray.700' px={10}>
+		<VStack flex={1} px={10}>
 			<Image
 				source={BackgroundImg}
 				alt='Pessoas treinando na academia'
@@ -36,7 +43,11 @@ export function LogIn() {
 				<Text color='white' fontFamily='body' fontSize={16} mb={2}>
 					Ainda não tem acesso?
 				</Text>
-				<Button title='Criar conta' variant='outline' />
+				<Button
+					onPress={handleCreateAccountPress}
+					title='Criar conta'
+					variant='outline'
+				/>
 			</Center>
 		</VStack>
 	);
