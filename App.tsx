@@ -9,6 +9,7 @@ import { THEME } from "./src/theme";
 import { Loading } from "@components/Loading";
 import { LogIn } from "@screens/LogIn";
 import { SignIn } from "@screens/SignIn";
+import { NavigationContainer } from "@react-navigation/native";
 
 export default function App() {
 	const [fontsLoaded] = useFonts({
@@ -17,13 +18,16 @@ export default function App() {
 	});
 
 	return (
-		<NativeBaseProvider theme={THEME}>
-			<StatusBar
-				barStyle='light-content'
-				backgroundColor='transparent'
-				translucent
-			/>
-			{fontsLoaded ? <SignIn /> : <Loading />}
-		</NativeBaseProvider>
+		<NavigationContainer>
+			<NativeBaseProvider theme={THEME}>
+				<StatusBar
+					barStyle='light-content'
+					backgroundColor='transparent'
+					translucent
+				/>
+
+				{fontsLoaded ? <SignIn /> : <Loading />}
+			</NativeBaseProvider>
+		</NavigationContainer>
 	);
 }
