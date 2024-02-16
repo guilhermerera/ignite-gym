@@ -16,6 +16,7 @@ export function LogIn() {
 		<VStack flex={1} px={10}>
 			<Image
 				source={BackgroundImg}
+				defaultSource={BackgroundImg}
 				alt='Pessoas treinando na academia'
 				position={"absolute"}
 			/>
