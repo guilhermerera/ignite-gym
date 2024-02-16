@@ -37,7 +37,7 @@ export function SignIn() {
 				/>
 				<Input placeholder='Senha' type='password' secureTextEntry />
 				<Input placeholder='Confirme a senha' type='password' secureTextEntry />
-				<Button title='Acessar' />
+				<Button title='Criar e acessar' />
 			</Center>
 			<Center mb='20'>
 				<Button title='Voltar para o login' variant='outline' />
