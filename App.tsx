@@ -7,7 +7,6 @@ import {
 } from "@expo-google-fonts/roboto";
 
 import { Routes } from "@routes/index";
-import { NavigationContainer } from "@react-navigation/native";
 
 import { THEME } from "./src/theme";
 import { Loading } from "@components/Loading";
