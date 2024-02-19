@@ -1,10 +1,10 @@
-import { Center, Text, useTheme } from "native-base";
+import { HomeHeader } from "@components/HomeHeader";
+import { VStack } from "native-base";
 
 export function Home() {
-	const { colors } = useTheme();
 	return (
-		<Center flex={1}>
-			<Text color={colors.gray[200]}>Home</Text>
-		</Center>
+		<VStack flex={1}>
+			<HomeHeader />
+		</VStack>
 	);
 }
