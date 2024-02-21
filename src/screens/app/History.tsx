@@ -46,6 +46,7 @@ export function History() {
 				contentContainerStyle={
 					exercises.length === 0 && { flex: 1, justifyContent: "center" }
 				}
+				showsVerticalScrollIndicator={false}
 			/>
 		</VStack>
 	);
