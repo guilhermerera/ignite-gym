@@ -5,8 +5,8 @@ export function HistoryCard() {
 		<HStack
 			alignItems='center'
 			px={5}
-            py={4}
-            mb={3}
+			py={4}
+			mb={3}
 			bg='gray.600'
 			rounded='md'
 			w='full'>
@@ -15,7 +15,8 @@ export function HistoryCard() {
 					fontSize='md'
 					color='white'
 					fontFamily='heading'
-					textTransform='capitalize'>
+					textTransform='capitalize'
+					numberOfLines={1}>
 					Costas
 				</Heading>
 				<Text

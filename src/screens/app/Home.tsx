@@ -30,7 +30,6 @@ export function Home() {
 
 	const navigation = useNavigation<AppNavigatorRouteProps>();
 
-	
 	function handleOpenExerciseDetails() {
 		navigation.navigate("exercise");
 	}
@@ -53,6 +52,7 @@ export function Home() {
 				horizontal
 				showsHorizontalScrollIndicator={false}
 				maxH={10}
+				minH={10}
 				my={10}
 				_contentContainerStyle={{ px: 6 }}
 			/>

@@ -1,4 +1,12 @@
-import { HStack, Heading, Icon, Image, Text, VStack } from "native-base";
+import {
+	HStack,
+	Heading,
+	Icon,
+	Image,
+	ScrollView,
+	Text,
+	VStack
+} from "native-base";
 import { TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -38,37 +46,38 @@ export function Exercise() {
 					</HStack>
 				</HStack>
 			</VStack>
-
-			<VStack p={8}>
-				<Image
-					source={{
-						uri: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-					}}
-					alt='Nome do Exercício'
-					w='full'
-					h={80}
-					resizeMode='cover'
-					rounded='lg'
-					mb={3}
-				/>
-				<VStack bg='gray.600' rounded='md' pb={4} px={4}>
-					<HStack alignItems='center' justifyContent='space-around' my={4}>
-						<HStack alignItems='center' px={8} py={4}>
-							<SeriesSVG />
-							<Text color='gray.200' ml={2} fontSize='md'>
-								3 séries
-							</Text>
+			<ScrollView>
+				<VStack p={8}>
+					<Image
+						source={{
+							uri: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+						}}
+						alt='Nome do Exercício'
+						w='full'
+						h={80}
+						resizeMode='cover'
+						rounded='lg'
+						mb={3}
+					/>
+					<VStack bg='gray.600' rounded='md' pb={4} px={4}>
+						<HStack alignItems='center' justifyContent='space-around' my={4}>
+							<HStack alignItems='center' px={8} py={4}>
+								<SeriesSVG />
+								<Text color='gray.200' ml={2} fontSize='md'>
+									3 séries
+								</Text>
+							</HStack>
+							<HStack alignItems='center' px={8} py={4}>
+								<RepetitionsSVG />
+								<Text color='gray.200' ml={2} fontSize='md'>
+									12 repetições
+								</Text>
+							</HStack>
 						</HStack>
-						<HStack alignItems='center' px={8} py={4}>
-							<RepetitionsSVG />
-							<Text color='gray.200' ml={2} fontSize='md'>
-								12 repetições
-							</Text>
-						</HStack>
-					</HStack>
-					<Button title='Marcar como realizado' fontSize='md' />
+						<Button title='Marcar como realizado' fontSize='md' />
+					</VStack>
 				</VStack>
-			</VStack>
+			</ScrollView>
 		</VStack>
 	);
 }
