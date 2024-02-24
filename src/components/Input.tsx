@@ -36,6 +36,9 @@ export function Input({
 					borderWidth: 1,
 					borderColor: "red.500"
 				}}
+				_disabled={{
+					pointerEvents: "none"
+				}}
 				{...props}
 			/>
 			<FormControl.ErrorMessage _text={{ color: "red.500", fontSize: "sm" }}>
