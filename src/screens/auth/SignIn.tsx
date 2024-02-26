@@ -1,8 +1,11 @@
-import { VStack, Image, Text, Center, Heading } from "native-base";
+import { VStack, Image, Text, Center, Heading, useToast } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+
+import { api } from "@services/api";
+import { AppError } from "@utils/AppError";
 
 import LogoSvg from "@assets/logo.svg";
 import BackgroundImg from "@assets/background.png";
@@ -34,24 +37,43 @@ const createAccountFormSchema = yup.object({
 });
 
 export function SignIn() {
+	const toast = useToast();
 	const navigation = useNavigation();
 	const {
 		control,
 		handleSubmit,
 		formState: { errors }
-	} = useForm<FormDataProps>({ resolver: yupResolver(createAccountFormSchema) });
+	} = useForm<FormDataProps>({
+		resolver: yupResolver(createAccountFormSchema)
+	});
 
 	function handleBackToLoginPress() {
 		navigation.goBack();
 	}
 
-	function handleCreateAccount({
-		name,
-		email,
-		password,
-		password_confirm
-	}: FormDataProps) {
-		console.log({ name, email, password, password_confirm });
+	async function handleCreateAccount({ name, email, password }: FormDataProps) {
+		try {
+			const { data } = await api.post("/users", { name, email, password });
+		} catch (error) {
+			const isAppError = error instanceof AppError;
+
+			toast.show({
+				title: isAppError
+					? error.message
+					: "Erro inesperado ao criar conta. Tente novamente.",
+				_title: {
+					color: "white",
+					fontSize: "md",
+					fontFamily: "heading",
+					textAlign: "center",
+					marginY: 2,
+					marginX: 4
+				},
+				placement: "top",
+				duration: 3000,
+				bgColor: "red.500"
+			});
+		}
 	}
 
 	return (
