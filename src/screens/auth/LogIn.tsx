@@ -1,16 +1,21 @@
+import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { VStack, Image, Text, Center, Heading } from "native-base";
+import { VStack, Image, Text, Center, Heading, useToast } from "native-base";
 
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+
+import { AuthNavigatorRouteProps } from "@routes/auth.routes";
+import { AppError } from "@utils/AppError";
+
+import { useAuth } from "@hooks/useAuth";
 
 import LogoSvg from "@assets/logo.svg";
 import BackgroundImg from "@assets/background.png";
 
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
-import { AuthNavigatorRouteProps } from "@routes/auth.routes";
 
 type LoginFormProps = {
 	email: string;
@@ -26,6 +31,9 @@ const loginFormSchema = yup.object({
 });
 
 export function LogIn() {
+	const [isLoginLoading, setIsLoginLoading] = useState(false);
+	const { logIn } = useAuth();
+	const toast = useToast();
 	const navigation = useNavigation<AuthNavigatorRouteProps>();
 	const {
 		control,
@@ -35,8 +43,31 @@ export function LogIn() {
 		resolver: yupResolver(loginFormSchema)
 	});
 
-	function handleLogin({ email, password }: LoginFormProps) {
-		console.log({ email, password });
+	async function handleLogin({ email, password }: LoginFormProps) {
+		try {
+			setIsLoginLoading(true);
+			await logIn(email, password);
+		} catch (error) {
+			const isAppError = error instanceof AppError;
+
+			toast.show({
+				title: isAppError
+					? error.message
+					: "Não foi possível realizar o login. Tente novamente.",
+				_title: {
+					color: "white",
+					fontSize: "md",
+					fontFamily: "heading",
+					textAlign: "center",
+					marginY: 2,
+					marginX: 4
+				},
+				placement: "top",
+				duration: 3000,
+				bgColor: "red.500"
+			});
+			setIsLoginLoading(false);
+		}
 	}
 
 	function handleCreateAccountPress() {
@@ -90,7 +121,11 @@ export function LogIn() {
 					)}
 				/>
 
-				<Button title='Acessar' onPress={handleSubmit(handleLogin)} />
+				<Button
+					isLoading={isLoginLoading}
+					title='Acessar'
+					onPress={handleSubmit(handleLogin)}
+				/>
 			</Center>
 			<Center mb='20'>
 				<Text color='white' fontFamily='body' fontSize={16} mb={2}>
