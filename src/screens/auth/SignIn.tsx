@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { VStack, Image, Text, Center, Heading, useToast } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
@@ -12,6 +13,7 @@ import BackgroundImg from "@assets/background.png";
 
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
+import { useAuth } from "@hooks/useAuth";
 
 type FormDataProps = {
 	name: string;
@@ -37,6 +39,9 @@ const createAccountFormSchema = yup.object({
 });
 
 export function SignIn() {
+	const [isLoading, setIsLoading] = useState(false);
+	const { logIn } = useAuth();
+
 	const toast = useToast();
 	const navigation = useNavigation();
 	const {
@@ -53,7 +58,9 @@ export function SignIn() {
 
 	async function handleCreateAccount({ name, email, password }: FormDataProps) {
 		try {
-			const { data } = await api.post("/users", { name, email, password });
+			setIsLoading(true);
+			await api.post("/users", { name, email, password });
+			await logIn(email, password)
 		} catch (error) {
 			const isAppError = error instanceof AppError;
 
@@ -154,6 +161,7 @@ export function SignIn() {
 				/>
 
 				<Button
+					isLoading={isLoading}
 					title='Criar e acessar'
 					onPress={handleSubmit(handleCreateAccount)}
 				/>
