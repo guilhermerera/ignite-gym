@@ -16,6 +16,7 @@ import BackgroundImg from "@assets/background.png";
 
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
+import { useErrorToast } from "@hooks/useErrorToast";
 
 type LoginFormProps = {
 	email: string;
@@ -33,7 +34,7 @@ const loginFormSchema = yup.object({
 export function LogIn() {
 	const [isLoginLoading, setIsLoginLoading] = useState(false);
 	const { logIn } = useAuth();
-	const toast = useToast();
+	const errorToast = useErrorToast();
 	const navigation = useNavigation<AuthNavigatorRouteProps>();
 	const {
 		control,
@@ -49,23 +50,12 @@ export function LogIn() {
 			await logIn(email, password);
 		} catch (error) {
 			const isAppError = error instanceof AppError;
-
-			toast.show({
+			errorToast({
 				title: isAppError
 					? error.message
-					: "Não foi possível realizar o login. Tente novamente.",
-				_title: {
-					color: "white",
-					fontSize: "md",
-					fontFamily: "heading",
-					textAlign: "center",
-					marginY: 2,
-					marginX: 4
-				},
-				placement: "top",
-				duration: 3000,
-				bgColor: "red.500"
+					: "Não foi possível realizar o login. Tente novamente."
 			});
+
 			setIsLoginLoading(false);
 		}
 	}

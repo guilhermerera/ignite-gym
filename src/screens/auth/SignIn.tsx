@@ -14,6 +14,7 @@ import BackgroundImg from "@assets/background.png";
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 import { useAuth } from "@hooks/useAuth";
+import { useErrorToast } from "@hooks/useErrorToast";
 
 type FormDataProps = {
 	name: string;
@@ -42,7 +43,7 @@ export function SignIn() {
 	const [isLoading, setIsLoading] = useState(false);
 	const { logIn } = useAuth();
 
-	const toast = useToast();
+	const errorToast = useErrorToast();
 	const navigation = useNavigation();
 	const {
 		control,
@@ -60,25 +61,14 @@ export function SignIn() {
 		try {
 			setIsLoading(true);
 			await api.post("/users", { name, email, password });
-			await logIn(email, password)
+			await logIn(email, password);
 		} catch (error) {
 			const isAppError = error instanceof AppError;
 
-			toast.show({
+			errorToast({
 				title: isAppError
 					? error.message
-					: "Erro inesperado ao criar conta. Tente novamente.",
-				_title: {
-					color: "white",
-					fontSize: "md",
-					fontFamily: "heading",
-					textAlign: "center",
-					marginY: 2,
-					marginX: 4
-				},
-				placement: "top",
-				duration: 3000,
-				bgColor: "red.500"
+					: "Erro inesperado ao criar conta. Tente novamente."
 			});
 		}
 	}

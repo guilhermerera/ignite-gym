@@ -20,6 +20,7 @@ import * as FileSystem from "expo-file-system";
 import { Input } from "@components/Input";
 import { Avatar } from "@components/Avatar";
 import { Button } from "@components/Button";
+import { useErrorToast } from "@hooks/useErrorToast";
 
 const AVATAR_SIZE = 32;
 
@@ -70,7 +71,7 @@ export function Profile() {
 		}
 	});
 
-	const toast = useToast();
+	const errorToast = useErrorToast();
 	async function handleSelectPhoto() {
 		setIsPhotoLoading(true);
 		try {
@@ -89,26 +90,9 @@ export function Profile() {
 			if (assets[0].uri) {
 				const photoInfo = await FileSystem.getInfoAsync(assets[0].uri);
 				if (photoInfo.size && photoInfo.size / 1024 / 1024 > 1) {
-					toast.show({
+					errorToast({
 						title: "Imagem muito grande",
-						_title: {
-							color: "white",
-							fontSize: "md",
-							fontFamily: "heading",
-							textAlign: "center",
-							marginTop: 2
-						},
-						description: "Escolha uma de no máximo 1MB.",
-						_description: {
-							color: "white",
-							fontSize: "md",
-							fontFamily: "body",
-							marginX: 10,
-							marginBottom: 2
-						},
-						placement: "top",
-						duration: 3000,
-						bgColor: "red.500"
+						description: "Escolha uma de no máximo 1MB."
 					});
 					return;
 				}

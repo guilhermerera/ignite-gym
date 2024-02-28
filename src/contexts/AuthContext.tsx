@@ -71,7 +71,9 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 	async function logOut() {
 		try {
 			setIsLoadingUserStorageDate(true);
+
 			setUser({} as UserDTO);
+
 			await storageUserDelete();
 			await storageTokenDelete();
 		} catch (error) {
