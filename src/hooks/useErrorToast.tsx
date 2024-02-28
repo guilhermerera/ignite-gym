@@ -1,4 +1,4 @@
-import { View, useToast } from "native-base";
+import { useToast } from "native-base";
 
 type ToastProps = {
 	title: string;
@@ -15,7 +15,8 @@ export function useErrorToast() {
 				fontSize: "md",
 				fontFamily: "heading",
 				textAlign: "center",
-				marginTop: 2,
+                marginTop: 2,
+                marginX: 10,
 				marginBottom: description ? undefined : 2
 			},
 			description: description ? description : undefined,
