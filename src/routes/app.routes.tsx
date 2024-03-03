@@ -16,8 +16,11 @@ import ProfileIcon from "@assets/profile.svg";
 import { Exercise } from "@screens/app/Exercise";
 import { useTheme } from "native-base";
 
+
 type AppRoutes = {
-	exercise: undefined;
+	exercise: {
+		exerciseId: string;
+	};
 	history: undefined;
 	home: undefined;
 	profile: undefined;

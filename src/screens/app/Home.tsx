@@ -20,13 +20,13 @@ export function Home() {
 	const [exercises, setExercises] = useState<ExerciseDTO[]>(
 		[] as ExerciseDTO[]
 	);
-	const [groupSelected, setGroupSelected] = useState("costas");
+	const [groupSelected, setGroupSelected] = useState("antebraço");
 
 	const errorToast = useErrorToast();
 	const navigation = useNavigation<AppNavigatorRouteProps>();
 
-	function handleOpenExerciseDetails() {
-		navigation.navigate("exercise", );
+	function handleOpenExerciseDetails(exerciseId: string) {
+		navigation.navigate("exercise", { exerciseId });
 	}
 
 	async function fetchGroups() {
@@ -44,7 +44,7 @@ export function Home() {
 
 	async function fetchExercisesByGroup() {
 		try {
-			setIsLoading(true)
+			setIsLoading(true);
 			const { data } = await api.get(`/exercises/bygroup/${groupSelected}`);
 			setExercises(data);
 		} catch (error) {
@@ -52,7 +52,6 @@ export function Home() {
 			const title = isAppError ? error.message : "Erro ao buscar exercícios.";
 			errorToast({ title });
 		} finally {
-			
 			setIsLoading(false);
 		}
 	}
@@ -108,7 +107,7 @@ export function Home() {
 						renderItem={({ item }) => (
 							<ExerciseCard
 								exercise={item}
-								onPress={handleOpenExerciseDetails}
+								onPress={() => handleOpenExerciseDetails(item.id)}
 							/>
 						)}
 						showsVerticalScrollIndicator={false}
