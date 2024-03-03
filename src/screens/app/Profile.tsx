@@ -11,8 +11,7 @@ import {
 	ScrollView,
 	Skeleton,
 	Text,
-	VStack,
-	useToast
+	VStack
 } from "native-base";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
@@ -20,16 +19,18 @@ import * as FileSystem from "expo-file-system";
 import { Input } from "@components/Input";
 import { Avatar } from "@components/Avatar";
 import { Button } from "@components/Button";
+
 import { useErrorToast } from "@hooks/useErrorToast";
+import { useAuth } from "@hooks/useAuth";
 
 const AVATAR_SIZE = 32;
 
 type ProfileFormProps = {
 	name: string;
 	email: string;
-	oldPassword: string;
-	newPassword: string;
-	confirmNewPassword: string;
+	oldPassword?: string;
+	newPassword?: string | null;
+	confirmNewPassword?: string | null;
 };
 
 const profileFormSchema = yup.object({
@@ -38,19 +39,33 @@ const profileFormSchema = yup.object({
 		.string()
 		.required("E-mail: Campo obrigatório.")
 		.email("E-mail: Formato inválido."),
-	oldPassword: yup.string().required("Senha antiga: Campo obrigatório."),
+	oldPassword: yup
+		.string()
+		.nullable()
+		.transform((value) => (!!value ? value : null)),
 	newPassword: yup
 		.string()
-		.required("Nova senha: Campo obrigatório.")
 		.min(6, "Nova senha: Mínimo de 6 caracteres.")
-		.notOneOf(
-			[yup.ref("oldPassword"), ""],
-			"Nova senha: Não pode ser igual a senha antiga."
-		),
+		.nullable()
+		.transform((value) => (!!value ? value : null))
+		.when("oldPassword", {
+			is: (Field: any) => Field && Field.length > 0,
+			then: (Field: any) =>
+				Field.required("Nova senha: informe a nova senha.").notOneOf(
+					[yup.ref("oldPassword"), ""],
+					"Nova senha: Não pode ser igual a senha antiga."
+				)
+		}),
 	confirmNewPassword: yup
 		.string()
-		.required("Confirmação de nova senha: Campo obrigatório.")
+		.nullable()
+		.transform((value) => (!!value ? value : null))
 		.oneOf([yup.ref("newPassword"), ""], "Senhas não conferem.")
+		.when("newPassword", {
+			is: (Field: any) => Field && Field.length > 0,
+			then: (Field: any) =>
+				Field.required("Confirmação de senha: Campo obrigatório.")
+		})
 });
 
 export function Profile() {
@@ -58,6 +73,7 @@ export function Profile() {
 	const [userPhoto, setUserPhoto] = useState(
 		"https://github.com/guilhermerera.png"
 	);
+	const { user } = useAuth();
 
 	const {
 		control,
@@ -66,8 +82,8 @@ export function Profile() {
 	} = useForm<ProfileFormProps>({
 		resolver: yupResolver(profileFormSchema),
 		defaultValues: {
-			name: "Guilherme Rera",
-			email: "guilhermerera@gmail.com"
+			name: user.name,
+			email: user.email
 		}
 	});
 
