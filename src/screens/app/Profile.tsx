@@ -16,19 +16,23 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 
+import { api } from "@services/api";
+
 import { Input } from "@components/Input";
 import { Avatar } from "@components/Avatar";
 import { Button } from "@components/Button";
 
-import { useErrorToast } from "@hooks/useErrorToast";
 import { useAuth } from "@hooks/useAuth";
+import { AppError } from "@utils/AppError";
+import { useErrorToast } from "@hooks/useErrorToast";
+import { useSuccessToast } from "@hooks/useSuccessToast";
 
 const AVATAR_SIZE = 32;
 
 type ProfileFormProps = {
 	name: string;
 	email: string;
-	oldPassword?: string;
+	oldPassword?: string | null;
 	newPassword?: string | null;
 	confirmNewPassword?: string | null;
 };
@@ -69,11 +73,12 @@ const profileFormSchema = yup.object({
 });
 
 export function Profile() {
+	const [isFormUpdating, setIsFormUpdating] = useState(false);
 	const [isPhotoLoading, setIsPhotoLoading] = useState(false);
 	const [userPhoto, setUserPhoto] = useState(
 		"https://github.com/guilhermerera.png"
 	);
-	const { user } = useAuth();
+	const { user, updateUserProfile } = useAuth();
 
 	const {
 		control,
@@ -88,6 +93,7 @@ export function Profile() {
 	});
 
 	const errorToast = useErrorToast();
+	const successToast = useSuccessToast();
 	async function handleSelectPhoto() {
 		setIsPhotoLoading(true);
 		try {
@@ -121,20 +127,31 @@ export function Profile() {
 		}
 	}
 
-	function handleUpdateProfile({
+	async function handleUpdateProfile({
 		name,
-		email,
 		oldPassword,
-		newPassword,
-		confirmNewPassword
+		newPassword
 	}: ProfileFormProps) {
-		console.log({
-			name,
-			email,
-			oldPassword,
-			newPassword,
-			confirmNewPassword
-		});
+		try {
+			setIsFormUpdating(true);
+
+			await api.put("/users", {
+				name,
+				old_password: oldPassword,
+				password: newPassword
+			});
+
+			const userUpdated = { ...user };
+			userUpdated.name = name;
+			await updateUserProfile(userUpdated);
+			successToast({ title: "Perfil atualizado com sucesso." });
+		} catch (error) {
+			const isAppError = error instanceof AppError;
+			const title = isAppError ? error.message : "Erro ao atualizar perfil.";
+			errorToast({ title });
+		} finally {
+			setIsFormUpdating(false);
+		}
 	}
 
 	return (
@@ -215,7 +232,7 @@ export function Profile() {
 								placeholder='Senha Antiga'
 								bg='gray.600'
 								secureTextEntry
-								value={value}
+								value={value!}
 								onChangeText={onChange}
 								errorMessage={errors.oldPassword?.message}
 							/>
@@ -229,7 +246,7 @@ export function Profile() {
 								placeholder='Nova senha'
 								bg='gray.600'
 								secureTextEntry
-								value={value}
+								value={value!}
 								onChangeText={onChange}
 								errorMessage={errors.newPassword?.message}
 							/>
@@ -244,7 +261,7 @@ export function Profile() {
 								placeholder='Confirme a nova senha'
 								bg='gray.600'
 								secureTextEntry
-								value={value}
+								value={value!}
 								onChangeText={onChange}
 								errorMessage={errors.confirmNewPassword?.message}
 							/>
@@ -255,6 +272,7 @@ export function Profile() {
 						title='Atualizar'
 						mt={4}
 						onPress={handleSubmit(handleUpdateProfile)}
+						isLoading={isFormUpdating}
 					/>
 				</Center>
 			</ScrollView>
