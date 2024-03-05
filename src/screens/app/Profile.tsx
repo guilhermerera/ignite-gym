@@ -27,6 +27,8 @@ import { AppError } from "@utils/AppError";
 import { useErrorToast } from "@hooks/useErrorToast";
 import { useSuccessToast } from "@hooks/useSuccessToast";
 
+import DefaultProfileImage from "@assets/userPhotoDefault.png";
+
 const AVATAR_SIZE = 32;
 
 type ProfileFormProps = {
@@ -75,9 +77,6 @@ const profileFormSchema = yup.object({
 export function Profile() {
 	const [isFormUpdating, setIsFormUpdating] = useState(false);
 	const [isPhotoLoading, setIsPhotoLoading] = useState(false);
-	const [userPhoto, setUserPhoto] = useState(
-		"https://github.com/guilhermerera.png"
-	);
 	const { user, updateUserProfile } = useAuth();
 
 	const {
@@ -111,15 +110,41 @@ export function Profile() {
 
 			if (assets[0].uri) {
 				const photoInfo = await FileSystem.getInfoAsync(assets[0].uri);
-				if (photoInfo.size && photoInfo.size / 1024 / 1024 > 1) {
+				if (photoInfo.size && photoInfo.size / 1024 / 1024 > 5) {
 					errorToast({
 						title: "Imagem muito grande",
-						description: "Escolha uma de no máximo 1MB."
+						description: "Escolha uma de no máximo 5MB."
 					});
 					return;
 				}
 			}
-			setUserPhoto(assets[0].uri);
+
+			const fileExtension = assets[0].uri.split(".").pop();
+
+			const photoFile = {
+				name: `${user.name}.${fileExtension}`.toLowerCase(),
+				type: `${assets[0].type}/${fileExtension}`,
+				uri: assets[0].uri
+			} as any;
+
+			const userPhotoUploadForm = new FormData();
+			userPhotoUploadForm.append("avatar", photoFile);
+
+			const avatarUpdatedResponse = await api.patch(
+				"/users/avatar",
+				userPhotoUploadForm,
+				{
+					headers: {
+						"Content-Type": "multipart/form-data"
+					}
+				}
+			);
+
+			const userUpdated = { ...user };
+			userUpdated.avatar = avatarUpdatedResponse.data.avatar;
+			await updateUserProfile(userUpdated);
+
+			successToast({ title: "Foto atualizada com sucesso." });
 		} catch (e) {
 			console.log(e);
 		} finally {
@@ -170,7 +195,11 @@ export function Profile() {
 					) : (
 						<Avatar
 							size={AVATAR_SIZE}
-							source={{ uri: userPhoto }}
+							source={
+								user.avatar
+									? { uri: `${api.defaults.baseURL}/avatar/${user.avatar}` }
+									: DefaultProfileImage
+							}
 							alt='Avatar do usuário'
 						/>
 					)}
