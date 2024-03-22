@@ -11,9 +11,10 @@ import {
 	storageTokenSave
 } from "@storage/storageToken";
 
-import { UserDTO } from "@dtos/UserDTO";
 import { api } from "@services/api";
-import { set } from "react-hook-form";
+import { UserDTO } from "@dtos/UserDTO";
+
+
 
 export type AuthContentDataPropos = {
 	user: UserDTO;
@@ -36,15 +37,23 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 	const [isLoadingUserStorageDate, setIsLoadingUserStorageDate] =
 		useState(true);
 
-	function setUserAndToken(userData: UserDTO, token: string) {
+	function setUserAndToken(
+		userData: UserDTO,
+		token: string,
+
+	) {
 		setUser(userData);
 		api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 	}
 
-	async function storageUserAndToken(userData: UserDTO, token: string) {
+	async function storageUserAndToken(
+		userData: UserDTO,
+		token: string,
+		refreshToken: string
+	) {
 		try {
 			await storageUserSave(userData);
-			await storageTokenSave(token);
+			await storageTokenSave({ token, refreshToken });
 		} catch (error) {
 			throw error;
 		}
@@ -57,9 +66,9 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 				password
 			});
 
-			if (data.user && data.token) {
+			if (data.user && data.token && data.refresh_token) {
 				setIsLoadingUserStorageDate(true);
-				await storageUserAndToken(data.user, data.token);
+				await storageUserAndToken(data.user, data.token, data.refresh_token);
 				setUserAndToken(data.user, data.token);
 			}
 		} catch (error) {
@@ -97,7 +106,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 		try {
 			setIsLoadingUserStorageDate(true);
 			const user = await storageUserGet();
-			const token = await storageTokenGet();
+			const { token } = await storageTokenGet();
 			if (user && token) {
 				setUserAndToken(user, token);
 			}
@@ -112,9 +121,21 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 		loadUserData();
 	}, []);
 
+	useEffect(() => {
+		const subscribe = api.registerInterceptTokenManager(logOut);
+
+		return () => subscribe();
+	}, [logOut]);
+
 	return (
 		<AuthContext.Provider
-			value={{ user, logIn, logOut, isLoadingUserStorageDate,updateUserProfile }}>
+			value={{
+				user,
+				logIn,
+				logOut,
+				isLoadingUserStorageDate,
+				updateUserProfile
+			}}>
 			{children}
 		</AuthContext.Provider>
 	);

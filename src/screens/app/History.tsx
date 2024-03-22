@@ -48,7 +48,7 @@ export function History() {
 					px={5}
 					sections={exercises}
 					keyExtractor={(item, index) => item.id}
-					renderItem={({ item }) => <HistoryCard exercise={item}/>}
+					renderItem={({ item }) => <HistoryCard exercise={item} />}
 					renderSectionHeader={({ section }) => (
 						<Heading
 							color='gray.200'
